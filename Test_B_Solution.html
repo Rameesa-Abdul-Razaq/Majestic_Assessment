@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8"/>
+  <title>Dinosaur Table</title>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+  <style>
+    body {
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: linear-gradient(135deg, #d9f1ff, #aeaeff);
+      padding: 40px;
+      padding-bottom: 100px;
+      display: flex;
+      justify-content: center;
+    }
+
+    #app {
+      background: white;
+      padding: 30px;
+      border-radius: 16px;
+      width: 750px;
+    }
+
+    h2 {
+      margin-top: 0;
+      color: #554fb0;
+      text-align: center;
+    }
+
+    input {
+      padding: 10px;
+      width: 60%;
+      border-radius: 8px;
+      border: 1px solid #bbb;
+      margin-bottom: 15px;
+      font-size: 15px;
+    }
+
+    button {
+      padding: 10px 16px;
+      background: #635ee7;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 15px;
+      margin-left: 10px;
+      transition: 0.2s;
+    }
+
+    button:hover {
+      background: #4f26c1;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    th {
+      background: #5650d4;
+      color: white;
+      padding: 12px;
+      font-size: 16px;
+    }
+
+    td {
+      padding: 12px;
+      background: #f9f6ff;
+    }
+
+    tr:hover td {
+      background: #c3bafd;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="app">
+    <h2>Dinosaur Records</h2>
+
+    <!--the input for searching-->
+    <input type="text" v-model="filterText" placeholder="Filter by name...">
+    <!--the button for sorting-->
+    <button @click="sortByAge">Sort by Age</button>
+
+    <!-- the table of dinosaurs-->
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Age</th>
+          <th>Alive?</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!--the filters for each field and type-->
+        <tr v-for="d in filteredDinosaurs" :key="d.name">
+          <td>{{ d.name }}</td>
+          <td>{{ d.type }}</td>
+          <td>{{ d.age }}</td>
+          <td>{{ d.isAlive ? "Yes" : "No" }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+    const { createApp } = Vue;
+
+    createApp({
+      data() {
+        return {
+        // the data for the table
+          filterText: "",
+          dinosaurs: [
+            {name: "Littlefoot", type: "Brontosaurus", age: 140000000, isAlive: false},
+            {name: "Steve", type: "Operations Director", age: 44, isAlive: true},
+            {name: "Barry", type: "Release Dinosaur", age: 33, isAlive: false},
+            {name: "Non-Trademark-Violating Zilla", type: "Godlike", age: 68, isAlive: false}
+          ]
+        };
+      },
+
+      computed: {
+        dinosaursWithFavourite() {
+          const ages = this.dinosaurs.map(d => d.age);
+          const meanAge = ages.reduce((a,b) => a+b, 0) / ages.length;
+          // data of my favourite dinosaur
+
+          return [
+            ...this.dinosaurs,
+            {
+              name: "Blue",
+              type: "Velociraptor",
+              age: Math.round(meanAge),
+              isAlive: false
+            }
+          ];
+        },
+        // when searching for the dinosuar
+        filteredDinosaurs() {
+          const text = this.filterText.toLowerCase();
+          return this.dinosaursWithFavourite.filter(d =>
+            d.name.toLowerCase().includes(text)
+          );
+        }
+      },
+
+    // sorting 
+      methods: {
+        sortByAge() {
+          this.dinosaurs.sort((a, b) => a.age - b.age);
+        }
+      }
+    }).mount("#app");
+  </script>
+</body>
+</html>
